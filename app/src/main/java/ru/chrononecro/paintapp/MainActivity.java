@@ -72,8 +72,12 @@ public class MainActivity extends AppCompatActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private SharedPreferences sharedPreferences;
     private final String nightModeKey = "NIGHT_MODE_KEY";
+    private final String awarnShownKey = "AWARN_SHOW_KEY";
     private final String colorsFile = "colors";
     private final String bitmapsFile = "bitmaps";
+    private final int[] ids = {R.drawable.bin, R.drawable.add_frame,
+            R.drawable.layers, R.drawable.stop, R.drawable.play,
+            R.drawable.pencil, R.drawable.brush, R.drawable.group};
     private List<byte[][]> bitmaps = new ArrayList<>();
     private float scaleFactor = 1.0f;
     private Handler handlerSave = new Handler();
@@ -90,6 +94,23 @@ public class MainActivity extends AppCompatActivity {
         PaintView.setColors(loadColors());
         setContentView(R.layout.activity_main);
         sharedPreferences = getSharedPreferences("My_Prefs", MODE_PRIVATE);
+        if (sharedPreferences.getBoolean(awarnShownKey, false) == false) {
+            sharedPreferences.edit().putBoolean(awarnShownKey, true).apply();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            LinearLayout layout = new LinearLayout(MainActivity.this);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setPadding(16, 16, 16, 16);
+            for (int i = 0; i < ids.length; i++) {
+                View view = new View(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(40, 40);
+                view.setLayoutParams(layoutParams);
+                view.setBackground(getDrawable(ids[i]));
+                layout.addView(view);
+            }
+            builder.setView(layout);
+            builder.setMessage("Внимание, эти кнопки имеют фукнкционал, доступный через длительное нажатие!")
+                    .show();
+        }
         init();
         ((FrameLayout) paintView.getParent()).setClipToOutline(true);
     }
